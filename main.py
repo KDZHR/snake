@@ -64,10 +64,12 @@ if __name__ == '__main__':
         # print(snapshots[-1])
 
     print("Simulation done")
-    print("Best brain:")
-    for brain in best_brains[0].export_brains():
-        print('\n'.join(' '.join(str(el) for el in elem) for elem in brain))
-        print()
+
+    # Works only with first type of brain
+    # print("Best brain:")
+    # for brain in best_brains[0].export_brains():
+    #     print('\n'.join(' '.join(str(el) for el in elem) for elem in brain))
+    #     print()
 
     root = Tk()
     root.geometry(f"{direct.APP_WIDTH}x{direct.APP_HEIGHT}")

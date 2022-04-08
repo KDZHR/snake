@@ -13,15 +13,7 @@ class Factory:
         self.best_brain_in_epoch = list()
 
     def cross(self, first_ind, second_ind):
-        new_brain = Brain()
-        for i in range(2 * self.radius - 1):
-            for j in range(2 * self.radius - 1):
-                for k in range(4):
-                    new_brain.set((i, j), self.brains[first_ind if randint(0, 1) == 0
-                                                                else second_ind].get_cell((i, j), False), False)
-                    new_brain.set((i, j), self.brains[first_ind if randint(0, 1) == 0
-                                                                else second_ind].get_cell((i, j), True), True)
-        return new_brain
+        return self.brains[first_ind].cross(self.brains[second_ind])
 
     def get_score(self, ind):
         # setstate(rnd_state)
