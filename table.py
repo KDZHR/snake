@@ -30,6 +30,7 @@ class Table:
     def get_random_coords(self):
         return randint(0, self.n - 1), randint(0, self.m - 1)
 
+    # unsafe
     def place_food_carefully(self):
         coords = self.get_random_coords()
         while self.get(coords) != direct.EMPTY:

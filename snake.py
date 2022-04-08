@@ -11,11 +11,15 @@ class Snake:
     def __str__(self):
         return self.table.__str__()
 
+    def can_move(self, direction):
+        new_head_coords = direct.get_new_coords(self.snake_coords[-1], direction)
+        return (new_head_coords == self.snake_coords[0] and len(self.snake_coords) > 2) or \
+               self.table.get(new_head_coords) in (direct.EMPTY, direct.FOOD)
+
     # direction: 0, 1, 2, 3 (L, R, U, D)
     def move(self, direction):
         new_head_coords = direct.get_new_coords(self.snake_coords[-1], direction)
-        if (new_head_coords == self.snake_coords[0] and len(self.snake_coords) > 2) or \
-                self.table.get(new_head_coords) in (direct.EMPTY, direct.FOOD):
+        if self.can_move(direction):
             ate_food = self.table.get(new_head_coords) == direct.FOOD
             if not ate_food:
                 self.table.place(self.snake_coords[0], direct.EMPTY)

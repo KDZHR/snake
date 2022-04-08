@@ -44,8 +44,8 @@ if __name__ == '__main__':
 
     factory = Factory()
     for i in range(direct.EPOCH_COUNT):
-        if i % 100 == 0:
-            print(f"Epoch {i}")
+        # if i % 100 == 0:
+        print(f"Epoch {i}")
         factory.make_epoch()
         # print("Success")
 

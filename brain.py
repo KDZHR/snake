@@ -12,8 +12,8 @@ class Brain:
         self.wall_brain = self.get_random_matrix()
 
     def rand(self):
-        # return 2 * random() - 1
-        return randint(-100000, 1000000)
+        return 2 * random() - 1
+        # return randint(-100000, 1000000)
 
     def get_random_matrix(self):
         return [[[self.rand() for _ in range(4)] for _ in range(2 * self.radius - 1)] for _ in range(2 * self.radius - 1)]
@@ -21,21 +21,25 @@ class Brain:
     def ask_table(self, table, head_coords, i, j):
         return table.get((head_coords[0] + i, head_coords[1] + j))
 
-    def make_decision(self, table, head_coords):
-        weights = [0] * 4
+    def make_decision(self, table, snake, head_coords):
+        weights = [[0, i] for i in range(4)]
         for i in range(2 * self.radius - 1):
             for j in range(2 * self.radius - 1):
                 val = self.ask_table(table, head_coords, i, j)
                 if val == direct.FOOD:
                     for k in range(4):
-                        weights[k] += self.food_brain[i][j][k]
+                        weights[k][0] += self.food_brain[i][j][k]
                 elif val in (direct.FOOD, direct.WALL):
                     for k in range(4):
-                        weights[k] += self.wall_brain[i][j][k]
-        max_val = max(weights)
-        for i in range(4):
-            if weights[i] == max_val:
-                return i
+                        weights[k][0] += self.wall_brain[i][j][k]
+        weights.sort(reverse=True)
+        if direct.SOFT_PUNISHMENT:
+            for i in range(4):
+                if snake.can_move(weights[i][1]):
+                    return weights[i][1], i
+            return weights[0][1], 4
+        else:
+            return weights[0][1], 0
 
     def set(self, coords, val, is_food_brain):
         if is_food_brain:
@@ -60,10 +64,11 @@ class Brain:
             table.place_food_carefully()
         score = 0
         for _ in range(direct.MAX_TIME):
-            plus_val = snake.move(self.make_decision(table, snake.get_head_coords()))
+            decision, mistake_count = self.make_decision(table, snake, snake.get_head_coords())
+            plus_val = snake.move(decision)
             if plus_val is None:
                 break
-            score += plus_val
+            score += plus_val + mistake_count * direct.BAD_CHOICE_PENALTY
         return score
 
     def get_cell(self, coords, is_food_brain):
@@ -77,7 +82,7 @@ class Brain:
         snaps = list()
         for _ in range(direct.MAX_TIME):
             table.make_snapshot(snaps)
-            if snake.move(self.make_decision(table, snake.get_head_coords())) is None:
+            if snake.move(self.make_decision(table, snake, snake.get_head_coords())[0]) is None:
                 break
         return snaps
 
